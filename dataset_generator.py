@@ -76,3 +76,64 @@ def create_highly_complex_dataset(n_samples=500000, n_features=15, noise_level=0
     y = complex_target + np.random.normal(0, noise_level * np.std(complex_target), n_samples)
     
     return X, y
+
+def create_extended_dataset(n_samples=500000, random_state=42):
+    if random_state is not None:
+        np.random.seed(random_state)
+    
+    # Original 15 complex features
+    X_original, y = create_highly_complex_dataset(n_samples, random_state=random_state)
+    
+    # 5 numeric features with moderate complexity
+    X_moderate = np.column_stack([
+        # Moderate complexity features - some non-linear relationships
+        np.sin(X_original[:, 0] * 0.5) + np.cos(X_original[:, 1] * 0.3),
+        np.log1p(np.abs(X_original[:, 2] * X_original[:, 3])),
+        np.tanh(X_original[:, 4] * 0.7) * np.arctan(X_original[:, 5] * 0.4),
+        np.sqrt(np.abs(X_original[:, 6])) + X_original[:, 7] * 0.2,
+        np.exp(X_original[:, 8] * 0.1) - np.exp(X_original[:, 9] * -0.1)
+    ])
+    
+    # 5 simple numeric features
+    X_simple = np.column_stack([
+        np.random.normal(0, 1, n_samples),
+        np.random.uniform(-1, 1, n_samples),
+        np.random.exponential(0.5, n_samples),
+        np.random.normal(0.5, 0.3, n_samples),
+        np.random.beta(1, 1, n_samples)
+    ])
+    
+    # 15 categorical features with different number of categories
+    categorical_features = []
+    n_categories_list = [2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 20, 25, 30, 50]
+    
+    for n_categories in n_categories_list:
+        # Generate categorical features with different distributions
+        if n_categories <= 5:
+            # More balanced categories
+            cat_feature = np.random.randint(0, n_categories, n_samples)
+        else:
+            # Some categories more frequent than others
+            probs = np.random.dirichlet(np.ones(n_categories) * 2)
+            cat_feature = np.random.choice(n_categories, n_samples, p=probs)
+        
+        categorical_features.append(cat_feature)
+    
+    X_categorical = np.column_stack(categorical_features)
+    
+    # Combine all features
+    X_combined = np.column_stack([X_original, X_moderate, X_simple, X_categorical])
+    
+    y_updated = y + (
+        # Add some moderate influence from new numeric features
+        X_moderate[:, 0] * 0.3 +
+        X_moderate[:, 1] * 0.2 +
+        X_simple[:, 0] * 0.1 +
+        X_simple[:, 1] * 0.05 +
+        # Add some categorical influence (using first 5 categorical features)
+        (X_categorical[:, 0] / n_categories_list[0]) * 0.4 +
+        (X_categorical[:, 1] / n_categories_list[1]) * 0.3 +
+        (X_categorical[:, 2] / n_categories_list[2]) * 0.2
+    )
+    
+    return X_combined, y_updated

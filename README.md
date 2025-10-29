@@ -24,9 +24,6 @@ This repository contains:
 
 *Core algorithm implementation available for research collaboration*
 
-### 📄 Research Paper
-[Download Research Summary](research_summary.pdf)
-
 ### 🚀 Quick Start
 ```python
 from dataset_generator import create_extended_dataset

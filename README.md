@@ -31,3 +31,15 @@ from dataset_generator import create_extended_dataset
 # Generate benchmark dataset
 X, y = create_extended_dataset(n_samples=50000, random_state=42)
 print(f"Dataset: {X.shape}, Target range: [{y.min():.2f}, {y.max():.2f}]")
+
+## 🌐 Official Publication
+
+**This research is now officially published on Hugging Face:**
+
+**Visit our official publication for:**
+- 📄 Research paper with detailed methodology
+- 📊 Interactive model card
+- 🔬 Community discussions
+- 📈 Download analytics
+
+**[Access Official Publication](https://huggingface.co/MohammadMurtuza/enhanced-gradient-boosting-research)**
